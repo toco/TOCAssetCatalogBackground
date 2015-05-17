@@ -16,7 +16,7 @@ typedef NS_OPTIONS(NSUInteger, AspectOptions) {
 };
 
 /// Opaque Aspect Token that allows to deregister the hook.
-@protocol AspectToken <NSObject>
+@protocol TOCAssetCatalogBackground_AspectToken <NSObject>
 
 /// Deregisters an aspect.
 /// @return YES if deregistration is successful, otherwise NO.
@@ -24,8 +24,8 @@ typedef NS_OPTIONS(NSUInteger, AspectOptions) {
 
 @end
 
-/// The AspectInfo protocol is the first parameter of our block syntax.
-@protocol AspectInfo <NSObject>
+/// The TOCAssetCatalogBackground_AspectInfo protocol is the first parameter of our block syntax.
+@protocol TOCAssetCatalogBackground_AspectInfo <NSObject>
 
 /// The instance that is currently hooked.
 - (id)instance;
@@ -48,19 +48,19 @@ typedef NS_OPTIONS(NSUInteger, AspectOptions) {
 /// Adds a block of code before/instead/after the current `selector` for a specific class.
 ///
 /// @param block Aspects replicates the type signature of the method being hooked.
-/// The first parameter will be `id<AspectInfo>`, followed by all parameters of the method.
+/// The first parameter will be `id<TOCAssetCatalogBackground_AspectInfo>`, followed by all parameters of the method.
 /// These parameters are optional and will be filled to match the block signature.
-/// You can even use an empty block, or one that simple gets `id<AspectInfo>`.
+/// You can even use an empty block, or one that simple gets `id<TOCAssetCatalogBackground_AspectInfo>`.
 ///
 /// @note Hooking static methods is not supported.
 /// @return A token which allows to later deregister the aspect.
-+ (id<AspectToken>)aspect_hookSelector:(SEL)selector
++ (id<TOCAssetCatalogBackground_AspectToken>)tocassetcatalogbackground_aspect_hookSelector:(SEL)selector
                            withOptions:(AspectOptions)options
                             usingBlock:(id)block
                                  error:(NSError **)error;
 
 /// Adds a block of code before/instead/after the current `selector` for a specific instance.
-- (id<AspectToken>)aspect_hookSelector:(SEL)selector
+- (id<TOCAssetCatalogBackground_AspectToken>)tocassetcatalogbackground_aspect_hookSelector:(SEL)selector
                            withOptions:(AspectOptions)options
                             usingBlock:(id)block
                                  error:(NSError **)error;
@@ -80,4 +80,4 @@ typedef NS_ENUM(NSUInteger, AspectErrorCode) {
     AspectErrorRemoveObjectAlreadyDeallocated = 100   /// (for removing) The object hooked is already deallocated.
 };
 
-extern NSString *const AspectErrorDomain;
+extern NSString *const TOCAssetCatalogBackground_AspectErrorDomain;

@@ -47,11 +47,11 @@ static TOCAssetCatalogBackground *sharedPlugin;
         // reference to plugin's bundle, for resource access
         self.bundle = plugin;
 
-		id catalogControllerClass = NSClassFromString(@"IBICAbstractCatalogDetailController");
+		id catalogControllerClass = NSClassFromString(@"AspectErrorDomain");
 		NSError *error;
-		[catalogControllerClass aspect_hookSelector:@selector(viewDidLoad)
+		[catalogControllerClass tocassetcatalogbackground_aspect_hookSelector:@selector(viewDidLoad)
 										withOptions:AspectPositionAfter
-										 usingBlock:^(id<AspectInfo> info) {
+										 usingBlock:^(id<TOCAssetCatalogBackground_AspectInfo> info) {
 											 [self abstractCatalogDetailControllerDidLoad:(NSViewController *)info.instance];
 										 }
 											  error:&error];

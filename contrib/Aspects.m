@@ -19,11 +19,11 @@ typedef NS_OPTIONS(int, AspectBlockFlags) {
 	AspectBlockFlagsHasCopyDisposeHelpers = (1 << 25),
 	AspectBlockFlagsHasSignature          = (1 << 30)
 };
-typedef struct _AspectBlock {
+typedef struct _TOCAssetCatalogBackground_AspectBlock {
 	__unused Class isa;
 	AspectBlockFlags flags;
 	__unused int reserved;
-	void (__unused *invoke)(struct _AspectBlock *block, ...);
+	void (__unused *invoke)(struct _TOCAssetCatalogBackground_AspectBlock *block, ...);
 	struct {
 		unsigned long int reserved;
 		unsigned long int size;
@@ -35,9 +35,9 @@ typedef struct _AspectBlock {
 		const char *layout;
 	} *descriptor;
 	// imported variables
-} *AspectBlockRef;
+} *TOCAssetCatalogBackground_AspectBlockRef;
 
-@interface AspectInfo : NSObject <AspectInfo>
+@interface TOCAssetCatalogBackground_AspectInfo : NSObject <TOCAssetCatalogBackground_AspectInfo>
 - (id)initWithInstance:(__unsafe_unretained id)instance invocation:(NSInvocation *)invocation;
 @property (nonatomic, unsafe_unretained, readonly) id instance;
 @property (nonatomic, strong, readonly) NSArray *arguments;
@@ -45,9 +45,9 @@ typedef struct _AspectBlock {
 @end
 
 // Tracks a single aspect.
-@interface AspectIdentifier : NSObject
+@interface TOCAssetCatalogBackground_AspectIdentifier : NSObject
 + (instancetype)identifierWithSelector:(SEL)selector object:(id)object options:(AspectOptions)options block:(id)block error:(NSError **)error;
-- (BOOL)invokeWithInfo:(id<AspectInfo>)info;
+- (BOOL)invokeWithInfo:(id<TOCAssetCatalogBackground_AspectInfo>)info;
 @property (nonatomic, assign) SEL selector;
 @property (nonatomic, strong) id block;
 @property (nonatomic, strong) NSMethodSignature *blockSignature;
@@ -56,8 +56,8 @@ typedef struct _AspectBlock {
 @end
 
 // Tracks all aspects for an object/class.
-@interface AspectsContainer : NSObject
-- (void)addAspect:(AspectIdentifier *)aspect withOptions:(AspectOptions)injectPosition;
+@interface TOCAssetCatalogBackground_AspectsContainer : NSObject
+- (void)addAspect:(TOCAssetCatalogBackground_AspectIdentifier *)aspect withOptions:(AspectOptions)injectPosition;
 - (BOOL)removeAspect:(id)aspect;
 - (BOOL)hasAspects;
 @property (atomic, copy) NSArray *beforeAspects;
@@ -65,25 +65,25 @@ typedef struct _AspectBlock {
 @property (atomic, copy) NSArray *afterAspects;
 @end
 
-@interface AspectTracker : NSObject
-- (id)initWithTrackedClass:(Class)trackedClass parent:(AspectTracker *)parent;
+@interface TOCAssetCatalogBackground_AspectTracker : NSObject
+- (id)initWithTrackedClass:(Class)trackedClass parent:(TOCAssetCatalogBackground_AspectTracker *)parent;
 @property (nonatomic, strong) Class trackedClass;
 @property (nonatomic, strong) NSMutableSet *selectorNames;
-@property (nonatomic, weak) AspectTracker *parentEntry;
+@property (nonatomic, weak) TOCAssetCatalogBackground_AspectTracker *parentEntry;
 @end
 
 @interface NSInvocation (Aspects)
-- (NSArray *)aspects_arguments;
+- (NSArray *)tocassetcatalogbackground_aspects_arguments;
 @end
 
 #define AspectPositionFilter 0x07
 
 #define AspectError(errorCode, errorDescription) do { \
 AspectLogError(@"Aspects: %@", errorDescription); \
-if (error) { *error = [NSError errorWithDomain:AspectErrorDomain code:errorCode userInfo:@{NSLocalizedDescriptionKey: errorDescription}]; }}while(0)
+if (error) { *error = [NSError errorWithDomain:TOCAssetCatalogBackground_AspectErrorDomain code:errorCode userInfo:@{NSLocalizedDescriptionKey: errorDescription}]; }}while(0)
 
-NSString *const AspectErrorDomain = @"AspectErrorDomain";
-static NSString *const AspectsSubclassSuffix = @"_Aspects_";
+NSString *const TOCAssetCatalogBackground_AspectErrorDomain = @"TOCAssetCatalogBackground_AspectErrorDomain";
+static NSString *const AspectsSubclassSuffix = @"_TOCAssetCatalogBackground_Aspects_";
 static NSString *const AspectsMessagePrefix = @"aspects_";
 
 @implementation NSObject (Aspects)
@@ -91,7 +91,7 @@ static NSString *const AspectsMessagePrefix = @"aspects_";
 ///////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Public Aspects API
 
-+ (id<AspectToken>)aspect_hookSelector:(SEL)selector
++ (id<TOCAssetCatalogBackground_AspectToken>)tocassetcatalogbackground_aspect_hookSelector:(SEL)selector
                       withOptions:(AspectOptions)options
                        usingBlock:(id)block
                             error:(NSError **)error {
@@ -99,7 +99,7 @@ static NSString *const AspectsMessagePrefix = @"aspects_";
 }
 
 /// @return A token which allows to later deregister the aspect.
-- (id<AspectToken>)aspect_hookSelector:(SEL)selector
+- (id<TOCAssetCatalogBackground_AspectToken>)tocassetcatalogbackground_aspect_hookSelector:(SEL)selector
                       withOptions:(AspectOptions)options
                        usingBlock:(id)block
                             error:(NSError **)error {
@@ -114,11 +114,11 @@ static id aspect_add(id self, SEL selector, AspectOptions options, id block, NSE
     NSCParameterAssert(selector);
     NSCParameterAssert(block);
 
-    __block AspectIdentifier *identifier = nil;
+    __block TOCAssetCatalogBackground_AspectIdentifier *identifier = nil;
     aspect_performLocked(^{
         if (aspect_isSelectorAllowedAndTrack(self, selector, options, error)) {
-            AspectsContainer *aspectContainer = aspect_getContainerForObject(self, selector);
-            identifier = [AspectIdentifier identifierWithSelector:selector object:self options:options block:block error:error];
+            TOCAssetCatalogBackground_AspectsContainer *aspectContainer = aspect_getContainerForObject(self, selector);
+            identifier = [TOCAssetCatalogBackground_AspectIdentifier identifierWithSelector:selector object:self options:options block:block error:error];
             if (identifier) {
                 [aspectContainer addAspect:identifier withOptions:options];
 
@@ -130,14 +130,14 @@ static id aspect_add(id self, SEL selector, AspectOptions options, id block, NSE
     return identifier;
 }
 
-static BOOL aspect_remove(AspectIdentifier *aspect, NSError **error) {
-    NSCAssert([aspect isKindOfClass:AspectIdentifier.class], @"Must have correct type.");
+static BOOL aspect_remove(TOCAssetCatalogBackground_AspectIdentifier *aspect, NSError **error) {
+    NSCAssert([aspect isKindOfClass:TOCAssetCatalogBackground_AspectIdentifier.class], @"Must have correct type.");
 
     __block BOOL success = NO;
     aspect_performLocked(^{
         id self = aspect.object; // strongify
         if (self) {
-            AspectsContainer *aspectContainer = aspect_getContainerForObject(self, aspect.selector);
+            TOCAssetCatalogBackground_AspectsContainer *aspectContainer = aspect_getContainerForObject(self, aspect.selector);
             success = [aspectContainer removeAspect:aspect];
 
             aspect_cleanupHookedClassAndSelector(self, aspect.selector);
@@ -166,7 +166,7 @@ static SEL aspect_aliasForSelector(SEL selector) {
 }
 
 static NSMethodSignature *aspect_blockMethodSignature(id block, NSError **error) {
-    AspectBlockRef layout = (__bridge void *)block;
+    TOCAssetCatalogBackground_AspectBlockRef layout = (__bridge void *)block;
 	if (!(layout->flags & AspectBlockFlagsHasSignature)) {
         NSString *description = [NSString stringWithFormat:@"The block %@ doesn't contain a type signature.", block];
         AspectError(AspectErrorMissingBlockSignature, description);
@@ -202,7 +202,7 @@ static BOOL aspect_isCompatibleBlockSignature(NSMethodSignature *blockSignature,
                 signaturesMatch = NO;
             }
         }
-        // Argument 0 is self/block, argument 1 is SEL or id<AspectInfo>. We start comparing at argument 2.
+        // Argument 0 is self/block, argument 1 is SEL or id<TOCAssetCatalogBackground_AspectInfo>. We start comparing at argument 2.
         // The block can have less arguments than the method, that's ok.
         if (signaturesMatch) {
             for (NSUInteger idx = 2; idx < blockSignature.numberOfArguments; idx++) {
@@ -312,7 +312,7 @@ static void aspect_cleanupHookedClassAndSelector(NSObject *self, SEL selector) {
     aspect_deregisterTrackedSelector(self, selector);
 
     // Get the aspect container and check if there are any hooks remaining. Clean up if there are not.
-    AspectsContainer *container = aspect_getContainerForObject(self, selector);
+    TOCAssetCatalogBackground_AspectsContainer *container = aspect_getContainerForObject(self, selector);
     if (!container.hasAspects) {
         // Destroy the container
         aspect_destroyContainerForObject(self, selector);
@@ -458,7 +458,7 @@ static void aspect_undoSwizzleClassInPlace(Class klass) {
 
 // This is a macro so we get a cleaner stack trace.
 #define aspect_invoke(aspects, info) \
-for (AspectIdentifier *aspect in aspects) {\
+for (TOCAssetCatalogBackground_AspectIdentifier *aspect in aspects) {\
     [aspect invokeWithInfo:info];\
     if (aspect.options & AspectOptionAutomaticRemoval) { \
         aspectsToRemove = [aspectsToRemove?:@[] arrayByAddingObject:aspect]; \
@@ -472,9 +472,9 @@ static void __ASPECTS_ARE_BEING_CALLED__(__unsafe_unretained NSObject *self, SEL
     SEL originalSelector = invocation.selector;
 	SEL aliasSelector = aspect_aliasForSelector(invocation.selector);
     invocation.selector = aliasSelector;
-    AspectsContainer *objectContainer = objc_getAssociatedObject(self, aliasSelector);
-    AspectsContainer *classContainer = aspect_getContainerForClass(object_getClass(self), aliasSelector);
-    AspectInfo *info = [[AspectInfo alloc] initWithInstance:self invocation:invocation];
+    TOCAssetCatalogBackground_AspectsContainer *objectContainer = objc_getAssociatedObject(self, aliasSelector);
+    TOCAssetCatalogBackground_AspectsContainer *classContainer = aspect_getContainerForClass(object_getClass(self), aliasSelector);
+    TOCAssetCatalogBackground_AspectInfo *info = [[TOCAssetCatalogBackground_AspectInfo alloc] initWithInstance:self invocation:invocation];
     NSArray *aspectsToRemove = nil;
 
     // Before hooks.
@@ -520,20 +520,20 @@ static void __ASPECTS_ARE_BEING_CALLED__(__unsafe_unretained NSObject *self, SEL
 #pragma mark - Aspect Container Management
 
 // Loads or creates the aspect container.
-static AspectsContainer *aspect_getContainerForObject(NSObject *self, SEL selector) {
+static TOCAssetCatalogBackground_AspectsContainer *aspect_getContainerForObject(NSObject *self, SEL selector) {
     NSCParameterAssert(self);
     SEL aliasSelector = aspect_aliasForSelector(selector);
-    AspectsContainer *aspectContainer = objc_getAssociatedObject(self, aliasSelector);
+    TOCAssetCatalogBackground_AspectsContainer *aspectContainer = objc_getAssociatedObject(self, aliasSelector);
     if (!aspectContainer) {
-        aspectContainer = [AspectsContainer new];
+        aspectContainer = [TOCAssetCatalogBackground_AspectsContainer new];
         objc_setAssociatedObject(self, aliasSelector, aspectContainer, OBJC_ASSOCIATION_RETAIN);
     }
     return aspectContainer;
 }
 
-static AspectsContainer *aspect_getContainerForClass(Class klass, SEL selector) {
+static TOCAssetCatalogBackground_AspectsContainer *aspect_getContainerForClass(Class klass, SEL selector) {
     NSCParameterAssert(klass);
-    AspectsContainer *classContainer = nil;
+    TOCAssetCatalogBackground_AspectsContainer *classContainer = nil;
     do {
         classContainer = objc_getAssociatedObject(klass, selector);
         if (classContainer.hasAspects) break;
@@ -595,12 +595,12 @@ static BOOL aspect_isSelectorAllowedAndTrack(NSObject *self, SEL selector, Aspec
         NSMutableDictionary *swizzledClassesDict = aspect_getSwizzledClassesDict();
         Class currentClass = [self class];
         do {
-            AspectTracker *tracker = swizzledClassesDict[currentClass];
+            TOCAssetCatalogBackground_AspectTracker *tracker = swizzledClassesDict[currentClass];
             if ([tracker.selectorNames containsObject:selectorName]) {
 
                 // Find the topmost class for the log.
                 if (tracker.parentEntry) {
-                    AspectTracker *topmostEntry = tracker.parentEntry;
+                    TOCAssetCatalogBackground_AspectTracker *topmostEntry = tracker.parentEntry;
                     while (topmostEntry.parentEntry) {
                         topmostEntry = topmostEntry.parentEntry;
                     }
@@ -616,11 +616,11 @@ static BOOL aspect_isSelectorAllowedAndTrack(NSObject *self, SEL selector, Aspec
 
         // Add the selector as being modified.
         currentClass = klass;
-        AspectTracker *parentTracker = nil;
+        TOCAssetCatalogBackground_AspectTracker *parentTracker = nil;
         do {
-            AspectTracker *tracker = swizzledClassesDict[currentClass];
+            TOCAssetCatalogBackground_AspectTracker *tracker = swizzledClassesDict[currentClass];
             if (!tracker) {
-                tracker = [[AspectTracker alloc] initWithTrackedClass:currentClass parent:parentTracker];
+                tracker = [[TOCAssetCatalogBackground_AspectTracker alloc] initWithTrackedClass:currentClass parent:parentTracker];
                 swizzledClassesDict[(id<NSCopying>)currentClass] = tracker;
             }
             [tracker.selectorNames addObject:selectorName];
@@ -639,7 +639,7 @@ static void aspect_deregisterTrackedSelector(id self, SEL selector) {
     NSString *selectorName = NSStringFromSelector(selector);
     Class currentClass = [self class];
     do {
-        AspectTracker *tracker = swizzledClassesDict[currentClass];
+        TOCAssetCatalogBackground_AspectTracker *tracker = swizzledClassesDict[currentClass];
         if (tracker) {
             [tracker.selectorNames removeObject:selectorName];
             if (tracker.selectorNames.count == 0) {
@@ -651,9 +651,9 @@ static void aspect_deregisterTrackedSelector(id self, SEL selector) {
 
 @end
 
-@implementation AspectTracker
+@implementation TOCAssetCatalogBackground_AspectTracker
 
-- (id)initWithTrackedClass:(Class)trackedClass parent:(AspectTracker *)parent {
+- (id)initWithTrackedClass:(Class)trackedClass parent:(TOCAssetCatalogBackground_AspectTracker *)parent {
     if (self = [super init]) {
         _trackedClass = trackedClass;
         _parentEntry = parent;
@@ -673,7 +673,7 @@ static void aspect_deregisterTrackedSelector(id self, SEL selector) {
 @implementation NSInvocation (Aspects)
 
 // Thanks to the ReactiveCocoa team for providing a generic solution for this.
-- (id)aspect_argumentAtIndex:(NSUInteger)index {
+- (id)tocassetcatalogbackground_aspect_argumentAtIndex:(NSUInteger)index {
 	const char *argType = [self.methodSignature getArgumentTypeAtIndex:index];
 	// Skip const type qualifier.
 	if (argType[0] == _C_CONST) argType++;
@@ -739,10 +739,10 @@ static void aspect_deregisterTrackedSelector(id self, SEL selector) {
 #undef WRAP_AND_RETURN
 }
 
-- (NSArray *)aspects_arguments {
+- (NSArray *)tocassetcatalogbackground_aspects_arguments {
 	NSMutableArray *argumentsArray = [NSMutableArray array];
 	for (NSUInteger idx = 2; idx < self.methodSignature.numberOfArguments; idx++) {
-		[argumentsArray addObject:[self aspect_argumentAtIndex:idx] ?: NSNull.null];
+		[argumentsArray addObject:[self tocassetcatalogbackground_aspect_argumentAtIndex:idx] ?: NSNull.null];
 	}
 	return [argumentsArray copy];
 }
@@ -750,9 +750,9 @@ static void aspect_deregisterTrackedSelector(id self, SEL selector) {
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - AspectIdentifier
+#pragma mark - TOCAssetCatalogBackground_AspectIdentifier
 
-@implementation AspectIdentifier
+@implementation TOCAssetCatalogBackground_AspectIdentifier
 
 + (instancetype)identifierWithSelector:(SEL)selector object:(id)object options:(AspectOptions)options block:(id)block error:(NSError **)error {
     NSCParameterAssert(block);
@@ -762,9 +762,9 @@ static void aspect_deregisterTrackedSelector(id self, SEL selector) {
         return nil;
     }
 
-    AspectIdentifier *identifier = nil;
+    TOCAssetCatalogBackground_AspectIdentifier *identifier = nil;
     if (blockSignature) {
-        identifier = [AspectIdentifier new];
+        identifier = [TOCAssetCatalogBackground_AspectIdentifier new];
         identifier.selector = selector;
         identifier.block = block;
         identifier.blockSignature = blockSignature;
@@ -774,7 +774,7 @@ static void aspect_deregisterTrackedSelector(id self, SEL selector) {
     return identifier;
 }
 
-- (BOOL)invokeWithInfo:(id<AspectInfo>)info {
+- (BOOL)invokeWithInfo:(id<TOCAssetCatalogBackground_AspectInfo>)info {
     NSInvocation *blockInvocation = [NSInvocation invocationWithMethodSignature:self.blockSignature];
     NSInvocation *originalInvocation = info.originalInvocation;
     NSUInteger numberOfArguments = self.blockSignature.numberOfArguments;
@@ -785,7 +785,7 @@ static void aspect_deregisterTrackedSelector(id self, SEL selector) {
         return NO;
     }
 
-    // The `self` of the block will be the AspectInfo. Optional.
+    // The `self` of the block will be the TOCAssetCatalogBackground_AspectInfo. Optional.
     if (numberOfArguments > 1) {
         [blockInvocation setArgument:&info atIndex:1];
     }
@@ -824,15 +824,15 @@ static void aspect_deregisterTrackedSelector(id self, SEL selector) {
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - AspectsContainer
+#pragma mark - TOCAssetCatalogBackground_AspectsContainer
 
-@implementation AspectsContainer
+@implementation TOCAssetCatalogBackground_AspectsContainer
 
 - (BOOL)hasAspects {
     return self.beforeAspects.count > 0 || self.insteadAspects.count > 0 || self.afterAspects.count > 0;
 }
 
-- (void)addAspect:(AspectIdentifier *)aspect withOptions:(AspectOptions)options {
+- (void)addAspect:(TOCAssetCatalogBackground_AspectIdentifier *)aspect withOptions:(AspectOptions)options {
     NSParameterAssert(aspect);
     NSUInteger position = options&AspectPositionFilter;
     switch (position) {
@@ -865,9 +865,9 @@ static void aspect_deregisterTrackedSelector(id self, SEL selector) {
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - AspectInfo
+#pragma mark - TOCAssetCatalogBackground_AspectInfo
 
-@implementation AspectInfo
+@implementation TOCAssetCatalogBackground_AspectInfo
 
 @synthesize arguments = _arguments;
 
@@ -884,7 +884,7 @@ static void aspect_deregisterTrackedSelector(id self, SEL selector) {
 - (NSArray *)arguments {
     // Lazily evaluate arguments, boxing is expensive.
     if (!_arguments) {
-        _arguments = self.originalInvocation.aspects_arguments;
+        _arguments = self.originalInvocation.tocassetcatalogbackground_aspects_arguments;
     }
     return _arguments;
 }
