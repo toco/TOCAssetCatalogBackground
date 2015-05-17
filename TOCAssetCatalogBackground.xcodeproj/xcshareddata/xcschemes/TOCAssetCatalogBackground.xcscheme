@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "890A4B3E171F031300AFE577"
+               BlueprintIdentifier = "DD03869B1B08C3BD004925EA"
                BuildableName = "TOCAssetCatalogBackground.xcplugin"
                BlueprintName = "TOCAssetCatalogBackground"
                ReferencedContainer = "container:TOCAssetCatalogBackground.xcodeproj">
@@ -61,7 +61,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "890A4B3E171F031300AFE577"
+            BlueprintIdentifier = "DD03869B1B08C3BD004925EA"
             BuildableName = "TOCAssetCatalogBackground.xcplugin"
             BlueprintName = "TOCAssetCatalogBackground"
             ReferencedContainer = "container:TOCAssetCatalogBackground.xcodeproj">

@@ -3,16 +3,24 @@
 //  TOCAssetCatalogBackground
 //
 //  Created by Tobias Conradi on 17.05.15.
-//  Copyright (c) 2015 Tobias Conradi. All rights reserved.
+//  Copyright (c) 2015 Tobias Conradi. Licensed under the MIT license.
 //
 
+#import <objc/runtime.h>
 #import "TOCAssetCatalogBackground.h"
+#import "TOCAssetCatalogBackgroundButtonTarget.h"
+#import "Aspects.h"
 
 static TOCAssetCatalogBackground *sharedPlugin;
+
+@interface NSObject (ShutUpWarnings)
++ (id)barButtonWithTitle:(id)arg1;
+@end
 
 @interface TOCAssetCatalogBackground()
 
 @property (nonatomic, strong, readwrite) NSBundle *bundle;
+@property (nonatomic, weak) NSScrollView *scrollView;
 @end
 
 @implementation TOCAssetCatalogBackground
@@ -38,27 +46,41 @@ static TOCAssetCatalogBackground *sharedPlugin;
     if (self = [super init]) {
         // reference to plugin's bundle, for resource access
         self.bundle = plugin;
-        
-        // Create menu items, initialize UI, etc.
 
-        // Sample Menu Item:
-        NSMenuItem *menuItem = [[NSApp mainMenu] itemWithTitle:@"Edit"];
-        if (menuItem) {
-            [[menuItem submenu] addItem:[NSMenuItem separatorItem]];
-            NSMenuItem *actionMenuItem = [[NSMenuItem alloc] initWithTitle:@"Do Action" action:@selector(doMenuAction) keyEquivalent:@""];
-            [actionMenuItem setTarget:self];
-            [[menuItem submenu] addItem:actionMenuItem];
-        }
+		id catalogControllerClass = NSClassFromString(@"IBICAbstractCatalogDetailController");
+		NSError *error;
+		[catalogControllerClass aspect_hookSelector:@selector(viewDidLoad)
+										withOptions:AspectPositionAfter
+										 usingBlock:^(id<AspectInfo> info) {
+											 [self abstractCatalogDetailControllerDidLoad:(NSViewController *)info.instance];
+										 }
+											  error:&error];
+		if (error != nil) {
+			NSLog(@"Failed to hook -[AspectErrorDomain viewDidLoad] with error: %@",error);
+		}
     }
     return self;
 }
 
-// Sample Action, for menu item:
-- (void)doMenuAction
+- (void)abstractCatalogDetailControllerDidLoad:(NSViewController *)controller
 {
-    NSAlert *alert = [[NSAlert alloc] init];
-    [alert setMessageText:@"Hello, World"];
-    [alert runModal];
+	NSSegmentedControl *barButton = [NSClassFromString(@"IBAccessorizedScrollViewButtonBar") barButtonWithTitle:@"Change Backgroundcolor"];
+
+	NSScrollView *scrollView = [controller valueForKey:@"scrollView"];
+	id buttonBar = [scrollView valueForKey:@"buttonBar"];
+
+	NSMutableArray *buttonsArray = [[buttonBar valueForKey:@"rightViews"] mutableCopy];
+	[buttonsArray insertObject:barButton atIndex:0];
+	[buttonBar setValue:[buttonsArray copy] forKey:@"rightViews"];
+
+	TOCAssetCatalogBackgroundButtonTarget *target = [TOCAssetCatalogBackgroundButtonTarget new];
+	target.scrollView = scrollView;
+	barButton.target = target;
+	barButton.action = @selector(segmentedControlChanged:);
+	[target updateBackgroundColor];
+
+	const void *key = @selector(segmentedControlChanged:); // just need a key
+	objc_setAssociatedObject(barButton,key, target, OBJC_ASSOCIATION_RETAIN);
 }
 
 - (void)dealloc

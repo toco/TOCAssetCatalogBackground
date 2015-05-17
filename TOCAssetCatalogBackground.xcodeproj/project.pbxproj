@@ -11,6 +11,9 @@
 		DD0386A21B08C3BD004925EA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD0386A11B08C3BD004925EA /* Foundation.framework */; };
 		DD0386A71B08C3BD004925EA /* TOCAssetCatalogBackground.xcscheme in Resources */ = {isa = PBXBuildFile; fileRef = DD0386A61B08C3BD004925EA /* TOCAssetCatalogBackground.xcscheme */; };
 		DD0386AA1B08C3BD004925EA /* TOCAssetCatalogBackground.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0386A91B08C3BD004925EA /* TOCAssetCatalogBackground.m */; };
+		DD27848E1B092FBB00FF617B /* TOCAssetCatalogBackgroundButtonTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = DD27848D1B092FBB00FF617B /* TOCAssetCatalogBackgroundButtonTarget.m */; };
+		DD2784901B0930CC00FF617B /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = DD27848F1B0930CC00FF617B /* LICENSE.txt */; };
+		DD4C2D951B09233700170340 /* Aspects.m in Sources */ = {isa = PBXBuildFile; fileRef = DD4C2D931B09233700170340 /* Aspects.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +24,12 @@
 		DD0386A61B08C3BD004925EA /* TOCAssetCatalogBackground.xcscheme */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = TOCAssetCatalogBackground.xcscheme; path = TOCAssetCatalogBackground.xcodeproj/xcshareddata/xcschemes/TOCAssetCatalogBackground.xcscheme; sourceTree = SOURCE_ROOT; };
 		DD0386A81B08C3BD004925EA /* TOCAssetCatalogBackground.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOCAssetCatalogBackground.h; sourceTree = "<group>"; };
 		DD0386A91B08C3BD004925EA /* TOCAssetCatalogBackground.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOCAssetCatalogBackground.m; sourceTree = "<group>"; };
+		DD27848C1B092FBB00FF617B /* TOCAssetCatalogBackgroundButtonTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TOCAssetCatalogBackgroundButtonTarget.h; sourceTree = "<group>"; };
+		DD27848D1B092FBB00FF617B /* TOCAssetCatalogBackgroundButtonTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TOCAssetCatalogBackgroundButtonTarget.m; sourceTree = "<group>"; };
+		DD27848F1B0930CC00FF617B /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.txt; path = TOCAssetCatalogBackground.xcodeproj/../LICENSE.txt; sourceTree = SOURCE_ROOT; };
+		DD4C2D921B09233700170340 /* Aspects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Aspects.h; sourceTree = "<group>"; };
+		DD4C2D931B09233700170340 /* Aspects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Aspects.m; sourceTree = "<group>"; };
+		DD4C2D941B09233700170340 /* LICENSE_Aspects.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE_Aspects.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,6 +48,7 @@
 		DD0386931B08C3BD004925EA = {
 			isa = PBXGroup;
 			children = (
+				DD4C2D911B09233700170340 /* contrib */,
 				DD0386A31B08C3BD004925EA /* TOCAssetCatalogBackground */,
 				DD03869E1B08C3BD004925EA /* Frameworks */,
 				DD03869D1B08C3BD004925EA /* Products */,
@@ -67,6 +77,8 @@
 			children = (
 				DD0386A81B08C3BD004925EA /* TOCAssetCatalogBackground.h */,
 				DD0386A91B08C3BD004925EA /* TOCAssetCatalogBackground.m */,
+				DD27848C1B092FBB00FF617B /* TOCAssetCatalogBackgroundButtonTarget.h */,
+				DD27848D1B092FBB00FF617B /* TOCAssetCatalogBackgroundButtonTarget.m */,
 				DD0386A41B08C3BD004925EA /* Supporting Files */,
 			);
 			path = TOCAssetCatalogBackground;
@@ -75,10 +87,21 @@
 		DD0386A41B08C3BD004925EA /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				DD27848F1B0930CC00FF617B /* LICENSE.txt */,
 				DD0386A51B08C3BD004925EA /* Info.plist */,
 				DD0386A61B08C3BD004925EA /* TOCAssetCatalogBackground.xcscheme */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		DD4C2D911B09233700170340 /* contrib */ = {
+			isa = PBXGroup;
+			children = (
+				DD4C2D921B09233700170340 /* Aspects.h */,
+				DD4C2D931B09233700170340 /* Aspects.m */,
+				DD4C2D941B09233700170340 /* LICENSE_Aspects.txt */,
+			);
+			path = contrib;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,6 +160,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD2784901B0930CC00FF617B /* LICENSE.txt in Resources */,
 				DD0386A71B08C3BD004925EA /* TOCAssetCatalogBackground.xcscheme in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -149,6 +173,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD0386AA1B08C3BD004925EA /* TOCAssetCatalogBackground.m in Sources */,
+				DD4C2D951B09233700170340 /* Aspects.m in Sources */,
+				DD27848E1B092FBB00FF617B /* TOCAssetCatalogBackgroundButtonTarget.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,6 +299,7 @@
 				DD0386AF1B08C3BD004925EA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
