@@ -15,12 +15,13 @@ static TOCAssetCatalogBackground *sharedPlugin;
 
 @interface NSObject (ShutUpWarnings)
 + (id)barButtonWithTitle:(id)arg1;
+- (id)effectiveTitleColor;
+- (void)refreshHighlightState;
 @end
 
 @interface TOCAssetCatalogBackground()
 
 @property (nonatomic, strong, readwrite) NSBundle *bundle;
-@property (nonatomic, weak) NSScrollView *scrollView;
 @end
 
 @implementation TOCAssetCatalogBackground
@@ -47,19 +48,25 @@ static TOCAssetCatalogBackground *sharedPlugin;
         // reference to plugin's bundle, for resource access
         self.bundle = plugin;
 
-		id catalogControllerClass = NSClassFromString(@"IBICAbstractCatalogDetailController");
-		NSError *error;
-		[catalogControllerClass tocassetcatalogbackground_aspect_hookSelector:@selector(viewDidLoad)
-										withOptions:AspectPositionAfter
-										 usingBlock:^(id<TOCAssetCatalogBackground_AspectInfo> info) {
-											 [self abstractCatalogDetailControllerDidLoad:(NSViewController *)info.instance];
-										 }
-											  error:&error];
-		if (error != nil) {
-			NSLog(@"Failed to hook -[IBICAbstractCatalogDetailController viewDidLoad] with error: %@",error);
-		}
+		[self hookIBICAbstractCatalogDetailController];
+		[self hookIBICMultipartImageView];
     }
     return self;
+}
+
+- (void)hookIBICAbstractCatalogDetailController
+{
+	id catalogControllerClass = NSClassFromString(@"IBICAbstractCatalogDetailController");
+	NSError *error;
+	[catalogControllerClass tocassetcatalogbackground_aspect_hookSelector:@selector(viewDidLoad)
+															  withOptions:AspectPositionAfter
+															   usingBlock:^(id<TOCAssetCatalogBackground_AspectInfo> info) {
+																   [self abstractCatalogDetailControllerDidLoad:(NSViewController *)info.instance];
+															   }
+																	error:&error];
+	if (error != nil) {
+		NSLog(@"Failed to hook -[IBICAbstractCatalogDetailController viewDidLoad] with error: %@",error);
+	}
 }
 
 - (void)abstractCatalogDetailControllerDidLoad:(NSViewController *)controller
@@ -83,6 +90,59 @@ static TOCAssetCatalogBackground *sharedPlugin;
 	objc_setAssociatedObject(barButton,key, target, OBJC_ASSOCIATION_RETAIN);
 }
 
+- (void)hookIBICMultipartImageView
+{
+	id multiPartImageViewClass = NSClassFromString(@"IBICMultipartImageView");
+	NSError *error;
+
+	void (^effectiveTitleColorBlock)(id<TOCAssetCatalogBackground_AspectInfo>) =
+	^(id<TOCAssetCatalogBackground_AspectInfo> info){
+		BOOL replaceColor = YES;
+		id instance = [info instance];
+		NSInvocation *invocation = [info originalInvocation];
+
+		if (TOCAssetCatalogBackgroundCurrentBackgroundType != TOCAssetCatalogBackgroundTypeDarkBackground) {
+			replaceColor = NO;
+		}
+		if ([[instance valueForKey:@"wholeSetShowsSelection"] boolValue]) {
+			replaceColor = NO;
+		}
+		if (replaceColor) {
+			__unsafe_unretained NSColor *color = [NSColor whiteColor];
+			[invocation setReturnValue:(void *)&color];
+		} else {
+			[invocation invoke];
+		}
+	};
+
+	[multiPartImageViewClass tocassetcatalogbackground_aspect_hookSelector:@selector(effectiveTitleColor)
+															   withOptions:AspectPositionInstead
+																usingBlock:effectiveTitleColorBlock
+																	 error:&error];
+	if (error != nil) {
+		NSLog(@"Failed to hook -[IBICMultipartImageView effectiveTitleColor] with error: %@",error);
+		error = nil;
+	}
+
+
+	void (^viewDidMoveToWindowBlock)(id<TOCAssetCatalogBackground_AspectInfo>) =
+	^(id<TOCAssetCatalogBackground_AspectInfo> info){
+		NSView *instance = [info instance];
+		if (instance.window) {
+			[[NSNotificationCenter defaultCenter] addObserver:instance selector:@selector(refreshHighlightState) name:TOCAssetCatalogBackgroundColorChangedNotification object:nil];
+		} else {
+			[[NSNotificationCenter defaultCenter] removeObserver:instance name:TOCAssetCatalogBackgroundColorChangedNotification object:nil];
+		}
+	};
+
+	[multiPartImageViewClass tocassetcatalogbackground_aspect_hookSelector:@selector(viewDidMoveToWindow)
+															   withOptions:AspectPositionAfter
+																usingBlock:viewDidMoveToWindowBlock
+																	 error:&error];
+	if (error != nil) {
+		NSLog(@"Failed to hook -[IBICMultipartImageView viewDidMoveToWindow] with error: %@",error);
+	}
+}
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];

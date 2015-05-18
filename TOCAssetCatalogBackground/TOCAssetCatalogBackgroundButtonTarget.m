@@ -8,8 +8,8 @@
 
 #import "TOCAssetCatalogBackgroundButtonTarget.h"
 
-static NSColor *TOCAssetCatalogSharedBackgroundColor = nil;
-static NSString *TOCAssetCatalogBackgroundColorChanged = @"TOCAssetCatalogBackgroundColorChanged";
+NSString *const TOCAssetCatalogBackgroundColorChangedNotification = @"TOCAssetCatalogBackgroundColorChanged";
+TOCAssetCatalogBackgroundType TOCAssetCatalogBackgroundCurrentBackgroundType = TOCAssetCatalogBackgroundTypeLightBackground;
 
 @implementation TOCAssetCatalogBackgroundButtonTarget
 
@@ -17,7 +17,7 @@ static NSString *TOCAssetCatalogBackgroundColorChanged = @"TOCAssetCatalogBackgr
 {
 	self = [super init];
 	if (self) {
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateBackgroundColor) name:TOCAssetCatalogBackgroundColorChanged object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateBackgroundColor) name:TOCAssetCatalogBackgroundColorChangedNotification object:nil];
 	}
 	return self;
 }
@@ -29,23 +29,29 @@ static NSString *TOCAssetCatalogBackgroundColorChanged = @"TOCAssetCatalogBackgr
 
 - (void)updateBackgroundColor
 {
-	if (TOCAssetCatalogSharedBackgroundColor) {
-		self.scrollView.backgroundColor = TOCAssetCatalogSharedBackgroundColor;
+	NSColor *nextColor = nil;
+	switch (TOCAssetCatalogBackgroundCurrentBackgroundType) {
+		case TOCAssetCatalogBackgroundTypeDarkBackground:
+			nextColor = [NSColor colorWithWhite:0.1 alpha:1.0];
+			break;
+		case TOCAssetCatalogBackgroundTypeLightBackground:
+		default:
+			nextColor = [NSColor whiteColor];
 	}
+	self.scrollView.backgroundColor = nextColor;
 }
 
 - (void)segmentedControlChanged:(id)sender
 {
-	NSColor *currentColor = self.scrollView.backgroundColor;
-	NSColor *nextColor = nil;
-	if ([currentColor isEqualTo:[NSColor whiteColor]]) {
-		nextColor = [NSColor colorWithWhite:0.1 alpha:1.0];
-	} else {
-		nextColor = [NSColor whiteColor];
+	switch (TOCAssetCatalogBackgroundCurrentBackgroundType) {
+		case TOCAssetCatalogBackgroundTypeDarkBackground:
+			TOCAssetCatalogBackgroundCurrentBackgroundType = TOCAssetCatalogBackgroundTypeLightBackground;
+			break;
+		case TOCAssetCatalogBackgroundTypeLightBackground:
+		default:
+			TOCAssetCatalogBackgroundCurrentBackgroundType = TOCAssetCatalogBackgroundTypeDarkBackground;
 	}
-	TOCAssetCatalogSharedBackgroundColor = nextColor;
-	[[NSNotificationCenter defaultCenter] postNotificationName:TOCAssetCatalogBackgroundColorChanged object:self];
-	self.scrollView.backgroundColor = nextColor;
+	[[NSNotificationCenter defaultCenter] postNotificationName:TOCAssetCatalogBackgroundColorChangedNotification object:self];
 }
 
 @end

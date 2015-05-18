@@ -7,6 +7,12 @@
 //
 
 #import <Cocoa/Cocoa.h>
+typedef NS_ENUM(NSUInteger, TOCAssetCatalogBackgroundType) {
+	TOCAssetCatalogBackgroundTypeLightBackground,
+	TOCAssetCatalogBackgroundTypeDarkBackground
+};
+extern NSString *const TOCAssetCatalogBackgroundColorChangedNotification;
+extern TOCAssetCatalogBackgroundType TOCAssetCatalogBackgroundCurrentBackgroundType;
 
 @interface TOCAssetCatalogBackgroundButtonTarget : NSObject
 @property (nonatomic, weak) NSScrollView *scrollView;
