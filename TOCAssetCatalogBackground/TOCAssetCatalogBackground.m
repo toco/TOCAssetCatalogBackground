@@ -47,7 +47,7 @@ static TOCAssetCatalogBackground *sharedPlugin;
         // reference to plugin's bundle, for resource access
         self.bundle = plugin;
 
-		id catalogControllerClass = NSClassFromString(@"AspectErrorDomain");
+		id catalogControllerClass = NSClassFromString(@"IBICAbstractCatalogDetailController");
 		NSError *error;
 		[catalogControllerClass tocassetcatalogbackground_aspect_hookSelector:@selector(viewDidLoad)
 										withOptions:AspectPositionAfter
@@ -56,7 +56,7 @@ static TOCAssetCatalogBackground *sharedPlugin;
 										 }
 											  error:&error];
 		if (error != nil) {
-			NSLog(@"Failed to hook -[AspectErrorDomain viewDidLoad] with error: %@",error);
+			NSLog(@"Failed to hook -[IBICAbstractCatalogDetailController viewDidLoad] with error: %@",error);
 		}
     }
     return self;
