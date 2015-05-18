@@ -1,7 +1,7 @@
 # TOCAssetCatalogBackground
 Xcode plugin to switch between white and dark background color in the asset catalog viewer.
 
-![](Screenshot.png)
+![](plugin.gif)
 
 ## Installation
 
