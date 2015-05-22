@@ -22,6 +22,9 @@ static TOCAssetCatalogBackground *sharedPlugin;
 @interface TOCAssetCatalogBackground()
 
 @property (nonatomic, strong, readwrite) NSBundle *bundle;
+@property (nonatomic) BOOL hookedIBICAbstractCatalogDetailController;
+@property (nonatomic) BOOL hookIBICMultipartImageView;
+
 @end
 
 @implementation TOCAssetCatalogBackground
@@ -47,16 +50,39 @@ static TOCAssetCatalogBackground *sharedPlugin;
     if (self = [super init]) {
         // reference to plugin's bundle, for resource access
         self.bundle = plugin;
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hookClasses) name:NSBundleDidLoadNotification object:nil];
+		[self hookClasses];
 
-		[self hookIBICAbstractCatalogDetailController];
-		[self hookIBICMultipartImageView];
     }
     return self;
 }
 
-- (void)hookIBICAbstractCatalogDetailController
+// since official plugins might not be loaded when we try to hook the classes,
+// we might need to wait for the bundles to load.
+// therefore hookClasses gets called every time a bundle is loaded, so we keep state
+// which class was hooked successfully.
+- (void)hookClasses {
+	if (!self.hookedIBICAbstractCatalogDetailController) {
+		self.hookedIBICAbstractCatalogDetailController = [self hookIBICAbstractCatalogDetailController];
+	}
+	if (!self.hookIBICMultipartImageView) {
+		self.hookIBICMultipartImageView = [self hookIBICMultipartImageView];
+	}
+
+	BOOL allHooked = self.hookedIBICAbstractCatalogDetailController && self.hookIBICMultipartImageView;
+	if (allHooked) {
+		[[NSNotificationCenter defaultCenter] removeObserver:self name:NSBundleDidLoadNotification object:nil];
+	}
+}
+
+- (BOOL)hookIBICAbstractCatalogDetailController
 {
+
 	id catalogControllerClass = NSClassFromString(@"IBICAbstractCatalogDetailController");
+	if (!catalogControllerClass) {
+		return NO;
+	}
+
 	NSError *error;
 	[catalogControllerClass tocassetcatalogbackground_aspect_hookSelector:@selector(viewDidLoad)
 															  withOptions:AspectPositionAfter
@@ -67,6 +93,8 @@ static TOCAssetCatalogBackground *sharedPlugin;
 	if (error != nil) {
 		NSLog(@"Failed to hook -[IBICAbstractCatalogDetailController viewDidLoad] with error: %@",error);
 	}
+
+	return YES;
 }
 
 - (void)abstractCatalogDetailControllerDidLoad:(NSViewController *)controller
@@ -90,9 +118,12 @@ static TOCAssetCatalogBackground *sharedPlugin;
 	objc_setAssociatedObject(barButton,key, target, OBJC_ASSOCIATION_RETAIN);
 }
 
-- (void)hookIBICMultipartImageView
+- (BOOL)hookIBICMultipartImageView
 {
 	id multiPartImageViewClass = NSClassFromString(@"IBICMultipartImageView");
+	if (!multiPartImageViewClass) {
+		return NO;
+	}
 	NSError *error;
 
 	void (^effectiveTitleColorBlock)(id<TOCAssetCatalogBackground_AspectInfo>) =
@@ -142,7 +173,9 @@ static TOCAssetCatalogBackground *sharedPlugin;
 	if (error != nil) {
 		NSLog(@"Failed to hook -[IBICMultipartImageView viewDidMoveToWindow] with error: %@",error);
 	}
+	return YES;
 }
+
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
