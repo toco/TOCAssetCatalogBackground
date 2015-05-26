@@ -99,7 +99,7 @@ static TOCAssetCatalogBackground *sharedPlugin;
 
 - (void)abstractCatalogDetailControllerDidLoad:(NSViewController *)controller
 {
-	NSSegmentedControl *barButton = [NSClassFromString(@"IBAccessorizedScrollViewButtonBar") barButtonWithTitle:@"Change Backgroundcolor"];
+	NSSegmentedControl *barButton = [NSClassFromString(@"IBAccessorizedScrollViewButtonBar") barButtonWithTitle:@"Change Background Color"];
 
 	NSScrollView *scrollView = [controller valueForKey:@"scrollView"];
 	id buttonBar = [scrollView valueForKey:@"buttonBar"];
